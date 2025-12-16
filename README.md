@@ -1,3 +1,83 @@
+
+Ho implementato diverse misure di sicurezza per proteggere il sito da attacchi di Broken Access Control (violazione del controllo degli accessi), uno dei principali rischi OWASP Top 10. Ho modificato controller, rotte, middleware, template Blade e navbar per garantire che gli utenti accedano solo alle risorse autorizzate.
+
+Pagine Modificate e Misure Implementate
+1. ArticleController (punti 5,6,7)
+edit(): Controllo if(Auth::id() !== $article->user_id && !Auth::user()->isAdmin()) - solo autore o admin possono modificare.
+
+update(): Stesso controllo prima dell'update per prevenire modifiche non autorizzate.
+
+destroy(): Controllo if(Auth::id() !== $article->user_id) - solo autore può eliminare.
+
+2. web.php Routes
+Punto 1: Da /users/{id} (ID manipolabile) a /profile (solo utente autenticato).
+
+Punto 7: Da GET delete a DELETE /articles/{article}/delete (metodo HTTP sicuro).
+
+Punto 9: Dashboard nascosto su /dashboard/home.
+
+Punto 11: Tutte le rotte admin protette da middleware(['admin']).
+
+3. Navbar (Blade) - punto 3
+Dashboard link visibile solo con @if(auth()->user()->isAdmin()).
+
+Profile link usa route('profile') invece di ID manipolabile.
+
+4. show.blade.php (Article Show) - punto 4
+Bottoni Edit/Delete visibili solo con @if(auth()->user()->isAdmin() || auth()->user()->id == $article->user_id).
+
+5. AdminMiddleware
+Controllo !$request->user()->isAdmin() con redirect a articles.index per non-admin.
+
+Risultato
+Principio del privilegio minimo: ogni utente vede/sa/fà solo ciò che gli è consentito. Eliminati ID manipolabili nelle URL, implementati controlli server-side, middleware dedicati e conditional rendering lato client.
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+I implemented several security measures to protect the site from Broken Access Control attacks (OWASP Top 10). I modified controllers, routes, middleware, Blade templates, and navbar to ensure users access only authorized resources.
+
+Modified Files & Security Measures
+1. ArticleController (points 5,6,7)
+edit(): Check if(Auth::id() !== $article->user_id && !Auth::user()->isAdmin()) - only author or admin can edit.
+
+update(): Same check before update to prevent unauthorized modifications.
+
+destroy(): Check if(Auth::id() !== $article->user_id) - only author can delete.
+
+2. web.php Routes
+Point 1: From /users/{id} (manipulable ID) to /profile (authenticated user only).
+
+Point 7: From GET delete to DELETE /articles/{article}/delete (secure HTTP method).
+
+Point 9: Dashboard hidden at /dashboard/home.
+
+Point 11: All admin routes protected by middleware(['admin']).
+
+3. Navbar (Blade) - point 3
+Dashboard link visible only with @if(auth()->user()->isAdmin()).
+
+Profile link uses route('profile') instead of manipulable ID.
+
+4. show.blade.php - point 4
+Edit/Delete buttons visible only with @if(auth()->user()->isAdmin() || auth()->user()->id == $article->user_id).
+
+5. AdminMiddleware
+Check !$request->user()->isAdmin() with redirect for non-admins.
+
+Result
+Principle of least privilege: each user sees/does/knows only what they're allowed. Removed manipulable IDs from URLs, implemented server-side checks, dedicated middleware, and client-side conditional rendering.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
 # VulnBlog12 - Blog Vulnerabile per Studio Sicurezza
 
 <p align="center">
